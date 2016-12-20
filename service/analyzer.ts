@@ -1,6 +1,6 @@
-import * as jimp from 'jimp';
-import * as e from 'express';
-import * as m from 'multer';
+import * as e from 'express'
+import * as m from 'multer'
+import * as jimp from 'jimp'
 
 export class Analyzer {
 

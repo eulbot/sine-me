@@ -1,51 +1,45 @@
+import * as I from './interfaces';
+import * as S from './sinus';
 import * as $ from 'jquery';
 
-namespace sineme.client {
+class App {
 
-    interface IServiceResponse {
-        result: number[],
-        source: string
-    }
+    private sinus: S.sinus2;
+    private inputElement: HTMLInputElement;
+    private canvasElement: HTMLCanvasElement;
 
-    class app {
-
-        constructor () {
-            
-            $('#image-upload').change(this.upload);
-        }
-
-        private upload = (e: JQueryEventObject) => {
-            
-            let inputElement = <HTMLInputElement>e.target;
+    constructor () {
         
-            if(inputElement.files && inputElement.files.length > 0) {
-                let file = inputElement.files[0];
-                let formDate = new FormData();
-                formDate.append('image', file);
+        this.inputElement = <HTMLInputElement>document.querySelector("#image-upload");
+        this.canvasElement = <HTMLCanvasElement>document.querySelector("#canvas-result");
+        this.sinus = new S.sinus2(this.canvasElement);
+        $(this.inputElement).change(this.upload);
+    }
 
-                let xhr = new XMLHttpRequest();
-                xhr.open('POST', '/upload', true);
+    private upload = (e: JQueryEventObject) => {
+        
+        let inputElement = <HTMLInputElement>e.target;
+    
+        if(inputElement.files && inputElement.files.length > 0) {
+            let xhr = new XMLHttpRequest();
+            let file = inputElement.files[0];
+            let formDate = new FormData();
 
-                xhr.upload.onprogress = (e) => {
-                    if (e.lengthComputable) {
-                        var completed = (e.loaded / e.total) * 100;
-                        console.log(completed + '% uploaded');
-                    }
-                };
-
-                xhr.onload = (e) => {
-                    let response = <IServiceResponse>JSON.parse(xhr.response);
-
-                    let img = <HTMLImageElement>document.querySelector("#image-result");
-                    img.src = response.source;
-                }
-
-                xhr.send(formDate);
-            }
+            formDate.append('image', file);
+            xhr.open('POST', '/upload', true);
+            xhr.onload = (e) => this.process(<I.ServiceResponse>JSON.parse(xhr.response));
+            xhr.send(formDate);
         }
     }
 
-    $(() => {
-        new app();
-    });
+    private process = (response: I.ServiceResponse) => {
+        
+        let img = <HTMLImageElement>document.querySelector("#image-result");
+        img.src = response.source;
+        this.sinus.draw(response.result);
+    }
 }
+
+$(() => {
+    new App();
+});

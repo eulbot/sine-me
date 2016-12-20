@@ -1,21 +1,35 @@
 {
-  "name": "oneida-service",
+  "name": "sine-me",
   "version": "1.0.0",
-  "description": "",
+  "description": "Thingy to represent an image in sine waves",
   "main": "index.js",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eulbot/sine-me"
+  },
+  "readme": "",
   "dependencies": {
     "@types/express": "^4.0.34",
+    "@types/lodash": "^4.14.44",
     "@types/multer": "0.0.32",
+    "cardinal-spline-js": "^2.3.6",
     "express": "^4.14.0",
     "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
     "gulp-typescript": "^3.1.3",
-    "gulp-webpack": "^1.5.0",
+    "gulp-util": "^3.0.7",
     "jimp": "^0.2.27",
     "jquery": "^3.1.1",
+    "lodash": "^4.17.2",
     "multer": "^1.2.1",
+    "path": "^0.12.7",
+    "rollup": "^0.37.0",
+    "source-map-loader": "^0.1.5",
     "ts-loader": "^1.3.3",
     "typescript": "^2.1.4",
-    "webpack": "^1.14.0"
+    "webpack": "^1.14.0",
+    "webpack-stream": "^3.2.0"
   },
   "devDependencies": {},
   "scripts": {

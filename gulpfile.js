@@ -1,42 +1,44 @@
 var gulp = require("gulp");
+var gutil = require("gulp-util");
 var ts = require("gulp-typescript");
+var concat = require("gulp-concat");
 var sourcemaps = require('gulp-sourcemaps');
-
-var gulpWebpack = require('gulp-webpack');
 var webpack = require('webpack');
+var webpackConfig = require("./webpack.config.js");
+
+var myDevConfig = Object.create(webpackConfig);
+myDevConfig.devtool = "sourcemap";
+myDevConfig.debug = true;
+
+var devCompiler = webpack(myDevConfig);
 
 gulp.task('default', function () {
-    gulp.start('compile-client');
     gulp.start('compile-service');
-});
-
-gulp.task('compile-client', function() {
-    gulp.src('client/**/*.ts')
-    .pipe(gulpWebpack({
-        output: {
-            filename: 'client.js',
-        },
-        module: {
-            loaders: [
-                { test: /\.ts$/, loader: 'ts-loader' }
-            ]
-        },
-        devtool: 'source-map',
-        //plugins: [new webpack.optimize.UglifyJsPlugin()],
-    }, webpack))
-    .pipe(gulp.dest('./client/dist'));
+    gulp.start('compile-client');
 });
 
 gulp.task('compile-service', function() {
     return gulp.src('service/**/*.ts')
         .pipe(sourcemaps.init())
-        .pipe(ts({
-            target: 'ES5'
-        }))
+        .pipe(ts({ target: 'ES5' }))
         .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: '../'}))
         .pipe(gulp.dest('service/dist'));
 });
 
-gulp.task('watch', function () {
-  gulp.watch('client/**/*.ts', ['compile-typescript']);
+gulp.task('compile-ts-client', function() {
+    return gulp.src('client/**/*.ts')
+        .pipe(sourcemaps.init())
+        .pipe(ts({ target: 'ES5' }))
+        .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: '../'}))
+        .pipe(gulp.dest('client/dist'));
+});
+
+gulp.task("compile-client", ['compile-ts-client'], function(callback) {
+	devCompiler.run(function(err, stats) {
+		if(err) throw new gutil.PluginError("compile-webpack-client", err);
+		gutil.log("[compile-webpack-client]", stats.toString({
+			colors: true
+		}));
+		callback();
+	});
 });
