@@ -1,21 +1,21 @@
 import * as e from 'express';
+import * as m from 'multer';
 
-module sineme.service {
-    let msg = 'ts works as well.. really?';
-    let service = e();
-    
-    service.use('/', e.static(__dirname + '/../../client'));
+import { Analyzer } from './analyzer';
 
-    service.get('/hi', (req: e.Request, res: e.Response) => {
-        res.end('oh hey!');
-    });
+let service = e();
+let upload = m({ storage: m.memoryStorage() });
 
-    service.post('/upload', (req: e.Request, res: e.Response) => {
-        var x = req;
-        res.status(200).json({status:"ok"});
-    });
+// Default route
+service.use('/', e.static(__dirname + '/../../client'));
 
-    service.listen(1987, () => {
-        console.log('listening..');
-    });
-}
+// Image upload
+service.post('/upload', upload.single('image'), (req: e.Request, res: e.Response) => {
+
+    let analyzer = new Analyzer(req.file, res);
+    analyzer.getBrightness();
+});
+
+service.listen(1987, () => {
+    console.log('listening..');
+});

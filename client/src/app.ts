@@ -1,6 +1,11 @@
 import * as $ from 'jquery';
 
-module sineme.client {
+namespace sineme.client {
+
+    interface IServiceResponse {
+        result: number[],
+        source: string
+    }
 
     class app {
 
@@ -9,22 +14,33 @@ module sineme.client {
             $('#image-upload').change(this.upload);
         }
 
-        private upload(e: JQueryEventObject) {
+        private upload = (e: JQueryEventObject) => {
             
-            let image = <HTMLInputElement>e.target;
+            let inputElement = <HTMLInputElement>e.target;
+        
+            if(inputElement.files && inputElement.files.length > 0) {
+                let file = inputElement.files[0];
+                let formDate = new FormData();
+                formDate.append('image', file);
 
-            if(image.files && image.files.length > 0) {
-                $.ajax({
-                    url: '/upload',
-                    data: image.files[0],
-                    type: 'POST',
-                    contentType: false,
-                    processData: false
-                }).done(() => {
-                    console.log('weee');
-                }).fail(() => {
-                    console.log('aww shoot');
-                });
+                let xhr = new XMLHttpRequest();
+                xhr.open('POST', '/upload', true);
+
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) {
+                        var completed = (e.loaded / e.total) * 100;
+                        console.log(completed + '% uploaded');
+                    }
+                };
+
+                xhr.onload = (e) => {
+                    let response = <IServiceResponse>JSON.parse(xhr.response);
+
+                    let img = <HTMLImageElement>document.querySelector("#image-result");
+                    img.src = response.source;
+                }
+
+                xhr.send(formDate);
             }
         }
     }
