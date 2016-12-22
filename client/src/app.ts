@@ -36,7 +36,7 @@ class App {
         
         let img = <HTMLImageElement>document.querySelector("#image-result");
         img.src = response.source;
-        this.sinus.draw(response.result);
+        this.sinus.start(response.result);
     }
 }
 
