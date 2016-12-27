@@ -1,5 +1,6 @@
 import * as _ from 'lodash'
 import * as spline from 'cardinal-spline-js'
+import * as $ from 'jquery'
 
 interface EaseFunc {
     (t: number, lowerLimit: number, upperLimit: number): number;
@@ -8,12 +9,15 @@ interface EaseFunc {
 interface Easing {
     func: EaseFunc,
     ll: number,
-    ul: number
+    ul: number,
+    direction: number
 }
 
-export class sinus2 {
+export class Sinus {
     private ctx: CanvasRenderingContext2D;
     private data: number[][];
+    private patchsize: number;
+
     private easing: Easing[];
     private sf: number;
     private ef: number;
@@ -26,56 +30,58 @@ export class sinus2 {
     public start = (data: number[][]) => {
 
         this.data = data;
-        this.setEasing();
+        this.patchsize = Math.round($(window).width() / data[0].length);
+        this.ctx.canvas.width = $(window).width();
+        this.ctx.canvas.height = this.data.length * this.patchsize;
+        this.setupEasing();
         this.calcSplines();
         this.ef = 0;
 
         this.ctx.moveTo(0, this.data[0][0]);
         this.draw();
+
     }
 
     private calcSplines = () => {
 
-        let patchsize = 30;
         let w = this.canvas.width, h = this.canvas.height;
         let xs = _.range(0, this.data[0].length).map((x) => w * x / this.data[0].length);
         let step = xs.length / w;
 
         for(let row = 0; row < this.data.length; row++) {
-            let dent = this.data[row].map((x) => patchsize - (x * patchsize / 255));
+            let dent = this.data[row].map((x) => this.patchsize - (x * this.patchsize / 255));
             this.data[row] = spline.getCurvePoints(_.flatten(_.zip(xs, dent)), .5, w / xs.length);
         }   
     }
 
     private draw = () => {
 
-        this.ctx.clearRect(0, 0, 800, 1600);
+        let w = this.canvas.width;
+        let h = this.canvas.height;
+        this.ctx.clearRect(0, 0, w, h);
         this.sf = this.ef;
-        this.ef += 4;
+        this.ef += 10;
         
         for (let i = 0; i < this.data.length; i++) {
 
-            let w = this.canvas.width, row = this.data[i], er = this.easing[i];
+            let row = this.data[i], er = this.easing[i];
+            var x_from = 2 * Math.round(er.func(this.sf / w, er.ll, er.ul) * w / 2);
+            var x_to = 2 * Math.round(er.func(this.ef / w, er.ll, er.ul) * w / 2);
 
-            var xFrom = 2 * Math.round(er.func(this.sf / w, er.ll, er.ul) * w / 2);
-            var xTo = 2 * Math.round(er.func(this.ef / w, er.ll, er.ul) * w / 2);
-            this.ctx.moveTo(this.data[i][xFrom * 2], (this.data[i][xFrom * 2 + 1]) + i * 30);
-
-            for(let x = xFrom + 2; x <= xTo; x++) {
-                this.ctx.lineTo(row[x * 2], (row[x * 2 + 1]) + i * 30);
+            this.ctx.moveTo(this.data[i][x_from * 2], (this.data[i][x_from * 2 + 1]) + i * this.patchsize);
+            for(let x = x_from + 2; x <= x_to; x++) {
+                this.ctx.lineTo(row[x * 2], row[x * 2 + 1] + i * this.patchsize);
             }
         }
 
         this.ctx.stroke();
 
         if(this.ef < this.data[0].length / 2) {
-            // setTimeout(() => {
-                return window.requestAnimationFrame(this.draw);
-            // }, 200)
+            return window.requestAnimationFrame(this.draw);
         }
     }
 
-    private setEasing = () => {
+    private setupEasing = () => {
 
         let lowerLimit, upperLimit;
         this.easing = [];
@@ -88,7 +94,8 @@ export class sinus2 {
             this.easing.push(<Easing>{
                 func: this.easeInQuad,
                 ll: lowerLimit,
-                ul: upperLimit
+                ul: upperLimit,
+                direction: this.r(0, 1) < .5 ? 0 : 0
             })
         }
     }

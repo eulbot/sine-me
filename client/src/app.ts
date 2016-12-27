@@ -4,7 +4,7 @@ import * as $ from 'jquery';
 
 class App {
 
-    private sinus: S.sinus2;
+    private sinus: S.Sinus;
     private inputElement: HTMLInputElement;
     private canvasElement: HTMLCanvasElement;
 
@@ -12,7 +12,7 @@ class App {
         
         this.inputElement = <HTMLInputElement>document.querySelector("#image-upload");
         this.canvasElement = <HTMLCanvasElement>document.querySelector("#canvas-result");
-        this.sinus = new S.sinus2(this.canvasElement);
+        this.sinus = new S.Sinus(this.canvasElement);
         $(this.inputElement).change(this.upload);
     }
 
@@ -26,6 +26,7 @@ class App {
             let formDate = new FormData();
 
             formDate.append('image', file);
+            formDate.append('width', $(window).width())
             xhr.open('POST', '/upload', true);
             xhr.onload = (e) => this.process(<I.ServiceResponse>JSON.parse(xhr.response));
             xhr.send(formDate);
@@ -34,6 +35,7 @@ class App {
 
     private process = (response: I.ServiceResponse) => {
         
+        $('.upload-region').hide();
         let img = <HTMLImageElement>document.querySelector("#image-result");
         img.src = response.source;
         this.sinus.start(response.result);

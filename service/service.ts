@@ -12,7 +12,7 @@ service.use('/', e.static(__dirname + '/../../client'));
 // Image upload
 service.post('/upload', upload.single('image'), (req: e.Request, res: e.Response) => {
 
-    let analyzer = new Analyzer(req.file, res);
+    let analyzer = new Analyzer(req.file, req.body.width, res);
     analyzer.getBrightness();
 });
 
