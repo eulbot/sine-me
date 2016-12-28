@@ -1,22 +1,22 @@
 import * as e from 'express'
 import * as m from 'multer'
 import * as jimp from 'jimp'
+import * as _ from 'lodash'
+import * as spline from 'cardinal-spline-js'
 
 export class Analyzer {
 
-    public static PS = 10;
+    public static PS = 20;
     private image: any; // Write some definitions already
     private result;
     
-    constructor (public imageFile: Express.Multer.File, public width: number, public res: e.Response) { }
+    constructor (public imageFile: Express.Multer.File, public screnWidth: number, public res: e.Response) { }
 
-    public getBrightness() {
+    public process() {
         
         jimp.read(this.imageFile.buffer, (err, image) => {
             this.image = image;
-            
-            if(image.bitmap.width > 200)
-                this.fitToPatchSize();
+            this.fitToPatchSize();
 
             this.initResult(this.image.bitmap.height, this.image.bitmap.width);
 
@@ -48,22 +48,9 @@ export class Analyzer {
         let width = this.image.bitmap.width;
         let height = this.image.bitmap.height;
 
-        this.image.resize(Math.round(width / Analyzer.PS), Math.round(height / Analyzer.PS));
-    }
+        let targetWidth = Math.round(this.screnWidth / Analyzer.PS);
+        let targetHeight = height * (targetWidth / width);
 
-    private printResult() {
-
-        for(let i = 0; i < this.result.length; i++) {
-            let s = "";
-
-            for(let j = 0; j < this.result[i].length; j++) 
-                s += this.pad(4, this.result[i][j], ' ');
-
-            console.log(s);
-        }
-    }
-
-    private pad(width: number, string: string, padding: string): string { 
-        return (width <= string.length) ? string : this.pad(width, padding + string, padding)
+        this.image.resize(targetWidth, targetHeight);
     }
 }

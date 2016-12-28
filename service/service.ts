@@ -12,8 +12,13 @@ service.use('/', e.static(__dirname + '/../../client'));
 // Image upload
 service.post('/upload', upload.single('image'), (req: e.Request, res: e.Response) => {
 
-    let analyzer = new Analyzer(req.file, req.body.width, res);
-    analyzer.getBrightness();
+    try {
+        let analyzer = new Analyzer(req.file, req.body.width, res);
+        analyzer.process();
+    }
+    catch (ex) {
+        res.status(500).send('You killed it!')
+    }
 });
 
 service.listen(1987, () => {

@@ -38,7 +38,7 @@ class App {
         $('.upload-region').hide();
         let img = <HTMLImageElement>document.querySelector("#image-result");
         img.src = response.source;
-        this.sinus.start(response.result);
+        this.sinus.process(response.result);
     }
 }
 
