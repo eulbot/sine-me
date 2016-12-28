@@ -16,28 +16,24 @@ interface Easing {
 export class Sinus {
     private ctx: CanvasRenderingContext2D;
     private data: number[][];
-    private PS: number;
+    private ps: number;
 
     private easing: Easing[];
     private sf: number;
-    private ef: number;
+    private ef: number = 0;
 
     constructor (public canvas: HTMLCanvasElement) { 
         this.ctx = canvas.getContext('2d');
-        this.ctx.strokeStyle = 'rgba(0,0,0,0.7)';
     }
 
-    public process = (data: number[][]) => {
+    public process = (data: number[][], patchSize: number) => {
 
         this.data = data;
-        this.PS = 20;
-        this.ctx.canvas.width = $(window).width();
-        this.ctx.canvas.height = this.data.length * this.PS;
-        this.ctx.lineWidth = .5;
+        this.ps = patchSize;
         
+        this.setupCanvas();
         this.setupEasing();
         this.calcSines();
-        this.ef = 0;
 
         this.draw();
     }
@@ -49,8 +45,8 @@ export class Sinus {
         let step = xs.length / w;
 
         for(let row = 0; row < this.data.length; row++) {
-            let dent = this.data[row].map((x) => this.PS - (x * this.PS / 255));
-            this.data[row] = spline.getCurvePoints(_.flatten(_.zip(xs, dent)), .5, w / xs.length);
+            let dent = this.data[row].map((x) => this.ps - (x * this.ps / 255));
+            this.data[row] = spline.getCurvePoints(_.flatten(_.zip(xs, dent)), .5, this.ps);
             
             let phase = 0;
             for(let i = 0; i < this.data[row].length; i++) {
@@ -59,10 +55,10 @@ export class Sinus {
 
                     let delta = i > 0 ? this.data[row][i] - this.data[row][i - 2] : 0;
                     let fqcy = this.data[row][i + 1];
-                    let amount = (1 - (this.PS - fqcy) / this.PS);
+                    let amount = (1 - (this.ps - fqcy) / this.ps);
 
-                    phase += delta * amount / 2;
-                    let y = Math.sin(phase) * this.PS / 2 * amount;
+                    phase += delta * amount / 1.5;
+                    let y = Math.sin(phase) * this.ps / 2 * Math.pow(amount, 2);
                     this.data[row][i + 1] = y;
                 }
             }
@@ -74,30 +70,35 @@ export class Sinus {
 
         let w = this.canvas.width;
         let h = this.canvas.height;
-        this.ctx.clearRect(0, 0, w, h);
+        this.ctx.beginPath();
         this.sf = this.ef;
-        this.ef += 2;
+        this.ef += 4;
         
         for (let i = 0; i < this.data.length; i++) {
 
             let row = this.data[i], er = this.easing[i];
-            let offset = (i * this.PS) + this.PS / 2;
-            var x_from = 2 * Math.round(er.func(this.sf / w, er.ll, er.ul) * w / 2);
-            var x_to = 2 * Math.round(er.func(this.ef / w, er.ll, er.ul) * w / 2);
+            let offset = (i * this.ps) + this.ps / 1.5;
+            let x_from = 2 * Math.round(er.func(this.sf / w, er.ll, er.ul) * w / 2);
+            let x_to = 2 * Math.round(er.func(this.ef / w, er.ll, er.ul) * w / 2);
+            let r = er.direction * (this.data[i].length / 2 - 1);
 
-            this.ctx.moveTo(this.data[i][x_from * 2], (this.data[i][x_from * 2 + 1]) + offset);
-            for(let x = x_from + 2; x <= x_to; x++) {
-                this.ctx.lineTo(row[x * 2], row[x * 2 + 1] + offset);
-            }   
+            this.ctx.moveTo(this.data[i][Math.abs(r - x_from) * 2], (this.data[i][Math.abs(r - x_from) * 2 + 1]) + offset);
+            for(let x = x_from + 2; x <= x_to; x++) 
+                this.ctx.lineTo(row[Math.abs(r - x) * 2], row[Math.abs(r - x) * 2 + 1] + offset);
         }
 
         this.ctx.stroke();
 
         if(this.ef <= this.data[0].length / 2) {
-            setTimeout(() => {
-                window.requestAnimationFrame(this.draw);
-            }, 1000 / 60);
+            window.requestAnimationFrame(this.draw);
         }
+    }
+
+    private setupCanvas = () => {
+        this.ctx.canvas.width = $(window).width();
+        this.ctx.canvas.height = this.data.length * this.ps;
+        this.ctx.lineWidth = 2;
+        this.ctx.strokeStyle = 'rgba(255,255,255,0.7)';
     }
 
     private setupEasing = () => {
@@ -114,7 +115,7 @@ export class Sinus {
                 func: this.easeInQuad,
                 ll: lowerLimit,
                 ul: upperLimit,
-                direction: this.r(0, 1) < .5 ? 0 : 0
+                direction: this.r(0, 1) < .5 ? 0 : 1
             })
         }
     }

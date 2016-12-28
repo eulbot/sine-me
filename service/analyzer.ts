@@ -6,7 +6,7 @@ import * as spline from 'cardinal-spline-js'
 
 export class Analyzer {
 
-    public static PS = 20;
+    public static PS = 10;
     private image: any; // Write some definitions already
     private result;
     
@@ -28,7 +28,7 @@ export class Analyzer {
                 if(x == this.image.bitmap.width - 1 && y == this.image.bitmap.height -1) {
 
                     image.getBase64(this.image._originalMime, (fu, base) => {
-                        this.res.send({ result: this.result, source: base });
+                        this.res.send({ result: this.result, patchSize: Analyzer.PS, source: base });
                         this.res.status(200);
                     });
                 }
