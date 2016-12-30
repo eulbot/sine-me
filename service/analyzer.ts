@@ -10,32 +10,35 @@ export class Analyzer {
     private image: any; // Write some definitions already
     private result;
     
-    constructor (public imageFile: Express.Multer.File, public screnWidth: number, public res: e.Response) { }
+    constructor (public destination: string, public filename, public screnWidth: number, public res: e.Response) { }
 
     public process() {
-        
-        jimp.read(this.imageFile.buffer, (err, image) => {
+    
+        jimp.read(this.destination.concat(this.filename), (err, image) => {
+
+            if(!!err) {
+                this.res.status(500).send(err.message);
+                return;
+            }
+            
             this.image = image;
             this.fitToPatchSize();
-
             this.initResult(this.image.bitmap.height, this.image.bitmap.width);
 
             this.image.scan(0, 0, this.image.bitmap.width, this.image.bitmap.height, (x: number, y: number, idx: number) => {
                 
                 let pxl = this.image.bitmap.data;
                 this.result[y][x] = Math.round(0.2126*pxl[idx] + 0.7152*pxl[idx + 1] + 0.0722*pxl[idx + 2]);
-              
+            
                 if(x == this.image.bitmap.width - 1 && y == this.image.bitmap.height -1) {
 
                     image.getBase64(this.image._originalMime, (fu, base) => {
-                        setTimeout(() => { 
-                            this.res.send({ result: this.result, patchSize: Analyzer.PS, source: base });
-                            this.res.status(200);
-                        }, 3000);
+                        this.res.send({ result: this.result, patchsize: Analyzer.PS, filename: this.filename, source: base });
+                        this.res.status(200);
                     });
                 }
             });
-        })
+        });
     }
 
     private initResult(y: number, x: number) {
@@ -46,7 +49,7 @@ export class Analyzer {
     }
 
     private fitToPatchSize(): any {
-
+        
         let width = this.image.bitmap.width;
         let height = this.image.bitmap.height;
 

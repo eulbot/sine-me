@@ -6,8 +6,11 @@ class App {
 
     private sinus: S.Sinus;
     private image: File;
+    private filename: string;
+
     private inputElement: HTMLInputElement;
     private canvasElement: HTMLCanvasElement;
+    private failed: boolean;
 
     constructor () {
         
@@ -26,14 +29,35 @@ class App {
 
     private upload = (immediate?: boolean) => {
         
-        let xhr = new XMLHttpRequest();
-        let formDate = new FormData();
+        let formData = new FormData();
 
-        formDate.append('image', this.image);
-        formDate.append('width', $(window).width())
-        xhr.open('POST', '/upload', true);
-        xhr.onload = (e) => this.process(<I.ServiceResponse>JSON.parse(xhr.response), immediate);
-        xhr.send(formDate);
+        if(this.filename)
+            formData.append('filename', this.filename)
+        else
+            formData.append('image', this.image);
+        
+        formData.append('width', $(window).width())
+
+        $.ajax({
+            //url: 'http://138.68.98.45:1987/upload',
+            url: 'http://localhost:1987/upload',
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: (response) => this.process(<I.ServiceResponse>response, immediate),
+            error: (response) => {
+
+                if(response.status == 410) {
+                    this.filename = undefined;
+                    this.upload(true);
+                }
+                else {
+                    this.failed = true;
+                    this.showError();
+                }
+            }
+        });
     }
 
     private readImage = (e: JQueryEventObject) => {
@@ -51,29 +75,46 @@ class App {
     private process = (response: I.ServiceResponse, immediate?: boolean) => {
         
         this.hideSpinner();
+        
         let img = <HTMLImageElement>document.querySelector("#image-result");
         img.src = response.source;
-        this.sinus.process(response.result, response.patchSize, immediate);
+        this.filename = response.filename;
+
+        this.sinus.process(response.result, response.patchsize, immediate);
     }
 
     private resized = () => {
 
-        if(this.image)
+        if(this.image) {
+            this.showSpinner();
             this.upload(true)
+        }
     }
 
     private showSpinner = () => {
 
+        $('canvas').hide();
+
         if(!this.image) {
             $('.upload-region').fadeOut(333, () => {
-                $('.spinner').fadeIn(200);
+                if(!this.failed)
+                    $('.spinner-wrapper').fadeIn(200);
             })
-            $('.container').fadeIn(200);
         }
+        else
+            $('.container').fadeIn(200);
     }
 
     private hideSpinner = () => {
         $('.container').fadeOut(200);
+        $('canvas').show();
+    }
+
+    private showError = () => {
+        
+        $('.spinner-wrapper').fadeOut(200, () => {
+            $('.error-wrapper').fadeIn(200);
+        });
     }
 }
 

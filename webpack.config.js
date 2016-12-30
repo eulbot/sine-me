@@ -5,12 +5,18 @@ module.exports = {
 	output: {
         filename: './client/dist/client.js'
 	},
-    module: {
-        preLoaders: [
-            {
-                test: /\.js$/,
-                loader: "source-map-loader"
-            }
-        ]
-    }
+    // module: {
+    //     preLoaders: [
+    //         {
+    //             test: /\.js$/,
+    //             loader: "source-map-loader"
+    //         }
+    //     ]
+    // },
+    plugins: [
+        new webpack.optimize.UglifyJsPlugin({
+            comments: false,
+            minimize: true
+        })
+    ]
 };

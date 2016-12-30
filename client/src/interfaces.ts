@@ -1,5 +1,6 @@
 export interface ServiceResponse {
     result: number[][],
-    patchSize: number,
+    patchsize: number,
+    filename: string,
     source: string
 }
