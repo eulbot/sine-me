@@ -7,7 +7,7 @@ import { Analyzer } from './analyzer';
 
 let service = e();
 let cache = new c({ stdTTL: 300, checkperiod: 30 });
-let upload = m({ dest: './uploads' });
+let upload = m({ dest: './uploads', limits: { fileSize: 5242880} });
 
 // Remove default route in prod
 service.use('/', e.static(__dirname + '/../../client'));

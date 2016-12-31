@@ -19,7 +19,7 @@ class App {
         this.inputElement = <HTMLInputElement>document.querySelector("#image-upload");
         this.canvasElement = <HTMLCanvasElement>document.querySelector("#canvas-result");
         this.sinus = new S.Sinus(this.canvasElement);
-        this.clientWidth = $(window).width();
+        this.clientWidth = $(window).outerWidth();
 
         $(window).resize(() => {
             clearTimeout(delayedResize);
@@ -41,6 +41,8 @@ class App {
         formData.append('width', this.clientWidth)
 
         $.ajax({
+            url: 'http://138.68.98.45:1987/upload',
+            //url: 'http://localhost:1987/upload',
             data: formData,
             processData: false,
             contentType: false,
@@ -85,9 +87,10 @@ class App {
 
     private resized = () => {
 
-        if(this.image && this.clientWidth !== $(window).width()) {
+        if(this.image && this.clientWidth !== $(window).outerWidth()) {
+            this.clientWidth = $(window).outerWidth();
             this.showSpinner();
-            this.upload(true)
+            this.upload(true);
         }
     }
 
