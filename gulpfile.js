@@ -9,8 +9,8 @@ var webpack = require('webpack');
 var webpackConfig = require("./webpack.config.js");
 
 var myDevConfig = Object.create(webpackConfig);
-//myDevConfig.devtool = "sourcemap";
-myDevConfig.debug = false;
+myDevConfig.devtool = "sourcemap";
+//myDevConfig.debug = false;
 
 var devCompiler = webpack(myDevConfig);
 

@@ -10,21 +10,23 @@ html, body {
 
 body {
     min-width: 440px;
-    background: linear-gradient(135deg, #87e0fd 0%,#53cbf1 40%,#048be0 100%);
 }
 
 canvas {
     display: none;
 }
 
+
 .container {
     .stretched;
-    position: absolute;
-    text-align: center;
-    padding-top: 30%;
+
+    div.sc {
+        height: 25%;
+    }
 
     div.wrapper {
         text-align: center;
+        height: 100%;
     }
 
     label.upload-region {
@@ -154,4 +156,19 @@ canvas {
         color: rgba(255, 255, 255, .75);
         margin-top: -32pt;
     }
+}
+
+.bg-default {
+    background: linear-gradient(135deg, #87e0fd 0%,#53cbf1 40%,#048be0 100%);
+    transition: background .3s; 
+}
+
+.bg-black {
+    background-color: #000;
+    transition: background-color 1.5s; 
+}
+
+.bg-white {
+    background-color: #fff;
+    transition: background-color 5s; 
 }

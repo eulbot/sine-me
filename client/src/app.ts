@@ -7,6 +7,7 @@ class App {
     private sinus: S.Sinus;
     private image: File;
     private filename: string;
+    private clientWidth: number;
 
     private inputElement: HTMLInputElement;
     private canvasElement: HTMLCanvasElement;
@@ -18,6 +19,7 @@ class App {
         this.inputElement = <HTMLInputElement>document.querySelector("#image-upload");
         this.canvasElement = <HTMLCanvasElement>document.querySelector("#canvas-result");
         this.sinus = new S.Sinus(this.canvasElement);
+        this.clientWidth = $(window).width();
 
         $(window).resize(() => {
             clearTimeout(delayedResize);
@@ -36,11 +38,9 @@ class App {
         else
             formData.append('image', this.image);
         
-        formData.append('width', $(window).width())
+        formData.append('width', this.clientWidth)
 
         $.ajax({
-            //url: 'http://138.68.98.45:1987/upload',
-            url: 'http://localhost:1987/upload',
             data: formData,
             processData: false,
             contentType: false,
@@ -85,7 +85,7 @@ class App {
 
     private resized = () => {
 
-        if(this.image) {
+        if(this.image && this.clientWidth !== $(window).width()) {
             this.showSpinner();
             this.upload(true)
         }
@@ -94,6 +94,7 @@ class App {
     private showSpinner = () => {
 
         $('canvas').hide();
+        $('body').removeClass('bg-default bg-white').addClass('bg-black');
 
         if(!this.image) {
             $('.upload-region').fadeOut(333, () => {
@@ -108,10 +109,12 @@ class App {
     private hideSpinner = () => {
         $('.container').fadeOut(200);
         $('canvas').show();
+        $('body').removeClass('bg-black').addClass('bg-white');
     }
 
     private showError = () => {
         
+        $('body').removeClass('bg-white').addClass('bg-default');
         $('.spinner-wrapper').fadeOut(200, () => {
             $('.error-wrapper').fadeIn(200);
         });
