@@ -41,8 +41,6 @@ class App {
         formData.append('width', this.clientWidth)
 
         $.ajax({
-            url: 'http://localhost:1987/upload',
-            //url: 'http://138.68.98.45:1987/upload',
             data: formData,
             processData: false,
             contentType: false,
