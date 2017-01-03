@@ -92,7 +92,7 @@ export class Sinus {
             let r = er.direction * (this.sines[i].length / 2 - 1);
 
             this.ctx.moveTo(this.sines[i][Math.abs(r - from) * 2] / this.fx, (this.sines[i][Math.abs(r - from) * 2 + 1]));
-            for(let x = from + 2; x <= to; x++) 
+            for(let x = from + 2; x < to && (r == 0 || x < r); x++) 
                 this.ctx.lineTo(row[Math.abs(r - x) * 2] / this.fx, row[Math.abs(r - x) * 2 + 1]);
                 
         }
@@ -115,8 +115,8 @@ export class Sinus {
         this.ctx.canvas.width = $(window).outerWidth();
         this.ctx.canvas.height = this.data.length * this.ps;
         this.ctx.lineWidth = 1;
-        this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.95)';
         this.ctx.shadowBlur = 2.5;
+        this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.95)';
         this.ctx.shadowColor = 'rgb(0, 0, 0)';
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     }
@@ -146,18 +146,18 @@ export class Sinus {
 
     private pickEaseFunc = (): EaseFunc => {
 
-        let r = this.r(0, 3);
-        return r < 1 ? this.easeInQuad : r < 2 ? this.easeInQuad : this.easeInQuad;
+        let r = this.r(0, 2);
+        return r < 1 ? this.easeInQuad : r < 2 ? this.easeInQuad : this.easeInOutQuad;
     }
 
     private easeInQuad: EaseFunc = (t: number, ll: number, ul: number): number => {
         
-        return t < ll ? 0 : t > 1 ? 1 : t >= 1 - ul ? 1 : Math.pow((t - ll) * 1 / (1 - ll - ul), 2)
+        return t < ll ? 0 : t >= 1 - ul ? 1 : Math.pow((t - ll) * 1 / (1 - ll - ul), 2)
 	}
 
 	private easeOutQuad: EaseFunc = (t: number, ll: number, ul: number): number => {
 
-        return t < ll ? 0 : t > 1 ? 1 : t >= 1 - ul ? 1 : (t - ll) * 1 / (1 - ll - ul) * (2 - (t - ll) * 1 / (1 - ll - ul));
+        return t < ll ? 0 : t >= 1 - ul ? 1 : (t - ll) * 1 / (1 - ll - ul) * (2 - (t - ll) * 1 / (1 - ll - ul));
 	}
     
 	private easeInOutQuad: EaseFunc = (t: number, ll: number, ul: number): number => {
