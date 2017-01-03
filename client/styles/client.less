@@ -6,6 +6,7 @@ html, body {
     .stripped;
     .stretched;
     overflow-x: hidden;
+    font-family: 'Open Sans', sans-serif;
 }
 
 body {
@@ -31,52 +32,30 @@ canvas {
 
     label.upload-region {
 
-        width: 280px;
         display: inline-block;
 
         div.upload-button {
 
+            width: 400px;
+            text-align: center;
             margin-top: -32pt;
 
             div.prime {
+                display: inline-block;
                 cursor: pointer;
                 padding: 8pt 16pt;
-                font-family: 'Open Sans', sans-serif;
                 font-size: 28pt;
                 text-transform: uppercase;
                 color: rgba(255, 255, 255, .75);
                 border: 3px solid rgba(255, 255, 255, .75);
                 border-radius: 2px;
                 transition:  all .2s;
-                width: 280px;
+                .sw;
 
                 &:hover {
                     color: #53cbf1;
                     background-color: white;
                     transition:  all .3s;
-                }
-            }
-
-            div.sub {
-                text-align: center;
-                margin-top: 16pt;
-                width: 100%;
-                font-size: 11pt;
-                color: rgba(255, 255, 255, .8);
-                line-height: 28px;
-                font-family: 'Open Sans', sans-serif;
-
-                a {
-                    font-family: 'Enriqueta', serif;
-                    color: #444;
-                   text-decoration: none;  
-                }
-
-                svg { 
-                    margin-bottom: -3px;
-                    path {
-                        fill: #444;
-                    }
                 }
             }
         }
@@ -86,6 +65,34 @@ canvas {
             left: -10000px;
         }
     }
+
+    div.sub {
+        text-align: center;
+        margin-top: 16pt;
+        width: 100%;
+        font-size: 11pt;
+        color: rgba(255, 255, 255, .8);
+        line-height: 28px;
+        font-family: 'Open Sans', sans-serif;
+        color: #333;
+
+        a {
+            font-family: 'Enriqueta', serif;
+            color: #333;
+            text-decoration: none;  
+        }
+
+        svg { 
+            margin-bottom: -3px;
+            path {
+                fill: #333;
+            }
+        }
+    }
+}
+
+.sw {
+    width: 280px;
 }
 
 .stripped {
@@ -165,10 +172,107 @@ canvas {
 
 .bg-black {
     background-color: #000;
-    transition: background-color 1.5s; 
+    transition: background-color 2s; 
 }
 
 .bg-white {
     background-color: #fff;
     transition: background-color 5s; 
+}
+
+.cbx-animate {
+    margin-top: 1em;
+    font-size: 16px;
+    color: rgba(255, 255, 255, .75);
+    display: flex;
+    justify-content: center;
+
+    div.label {
+        margin-top: 3px;
+        margin-right: 5px;  
+    }
+
+    label {
+        font-size: 14px;
+    }
+}
+
+.tgl {
+  display: none;
+}
+.tgl, .tgl:after, .tgl:before, .tgl *, .tgl *:after, .tgl *:before, .tgl + .tgl-btn {
+  box-sizing: border-box;
+}
+.tgl::selection, .tgl:after::selection, .tgl:before::selection, .tgl *::selection, .tgl *:after::selection, .tgl *:before::selection, .tgl + .tgl-btn::selection {
+  background: none;
+}
+.tgl + .tgl-btn {
+  outline: 0;
+  display: block;
+  width: 4em;
+  height: 2em;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+.tgl + .tgl-btn:after, .tgl + .tgl-btn:before {
+  position: relative;
+  display: block;
+  content: "";
+  width: 50%;
+  height: 100%;
+}
+.tgl + .tgl-btn:after {
+  left: 0;
+}
+.tgl + .tgl-btn:before {
+  display: none;
+}
+.tgl:checked + .tgl-btn:after {
+  left: 50%;
+}
+
+.tgl-flip + .tgl-btn {
+  padding: 2px;
+  transition: all .2s ease;
+  font-family: sans-serif;
+  perspective: 100px;
+}
+.tgl-flip + .tgl-btn:after, .tgl-flip + .tgl-btn:before {
+  display: inline-block;
+  transition: all .4s ease;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  line-height: 2em;
+  font-weight: bold;
+  color: #fff;
+  position: absolute;
+  top: 0;
+  left: 0;
+  backface-visibility: hidden;
+  border-radius: 4px;
+}
+.tgl-flip + .tgl-btn:after {
+  content: attr(data-tg-on);
+  background: #86da73;
+  transform: rotateY(-180deg);
+}
+.tgl-flip + .tgl-btn:before {
+  background: #FF3A19;
+  content: attr(data-tg-off);
+}
+.tgl-flip + .tgl-btn:active:before {
+  transform: rotateY(-20deg);
+}
+.tgl-flip:checked + .tgl-btn:before {
+  transform: rotateY(180deg);
+}
+.tgl-flip:checked + .tgl-btn:after {
+  transform: rotateY(0);
+  left: 0;
+  background: #86da73;
+}
+.tgl-flip:checked + .tgl-btn:active:after {
+  transform: rotateY(20deg);
 }

@@ -41,8 +41,8 @@ class App {
         formData.append('width', this.clientWidth)
 
         $.ajax({
-            url: 'http://138.68.98.45:1987/upload',
-            //url: 'http://localhost:1987/upload',
+            url: 'http://localhost:1987/upload',
+            //url: 'http://138.68.98.45:1987/upload',
             data: formData,
             processData: false,
             contentType: false,
@@ -81,6 +81,7 @@ class App {
         let img = <HTMLImageElement>document.querySelector("#image-result");
         img.src = response.source;
         this.filename = response.filename;
+        immediate = immediate || !$("#cb5").is(':checked');
 
         this.sinus.process(response.result, response.patchsize, immediate);
     }
@@ -99,14 +100,10 @@ class App {
         $('canvas').hide();
         $('body').removeClass('bg-default bg-white').addClass('bg-black');
 
-        if(!this.image) {
-            $('.upload-region').fadeOut(333, () => {
-                if(!this.failed)
-                    $('.spinner-wrapper').fadeIn(200);
-            })
-        }
+        if(!this.image)
+            $('.wrapper').fadeOut(1000);
         else
-            $('.container').fadeIn(200);
+            $('.wrapper').fadeIn(200);
     }
 
     private hideSpinner = () => {
