@@ -92,8 +92,9 @@ export class Sinus {
             let r = er.direction * (this.sines[i].length / 2 - 1);
 
             this.ctx.moveTo(this.sines[i][Math.abs(r - from) * 2] / this.fx, (this.sines[i][Math.abs(r - from) * 2 + 1]));
-            for(let x = from + 2; x < to && (r == 0 || x < r); x++) 
+            for(let x = from + 2; x <= to && (r == 0 || r - x >= 0); x++) {
                 this.ctx.lineTo(row[Math.abs(r - x) * 2] / this.fx, row[Math.abs(r - x) * 2 + 1]);
+            }
                 
         }
 
