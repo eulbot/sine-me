@@ -14,11 +14,11 @@ body {
 }
 
 canvas {
-    display: none;
+    position: absolute;
 }
 
-
 .container {
+    position: absolute;
     .stretched;
 
     div.sc {
@@ -105,19 +105,26 @@ canvas {
     height: 100%;
 }
 
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .spinner-wrapper {
     display: none;
+    .stretched;
+    margin-top: -3em;
 
     .spinner {    
-        display: inline-block;
-        width: 70px;
-        height: 70px;
-        text-align: center;
+        .stretched;
+        .centered;
     }
 
     .spinner > div {
         width: 18px;
         height: 18px;
+        margin: 0 .5em;
         background-color: rgba(255, 255, 255, .8);
 
         border-radius: 100%;
@@ -153,10 +160,14 @@ canvas {
 }
 
 .error-wrapper {
-    display: none;
+    display: none;    
+    text-align: center;
+    height: 100%;
+    margin-top: -3em;
 
     .error {
-        display: inline-block;
+        .stretched;
+        .centered;
         font-family: 'Open Sans', sans-serif;
         font-size: 24pt;
         text-transform: uppercase;
@@ -182,7 +193,7 @@ canvas {
 
 .cbx-animate {
     margin-top: 1em;
-    font-size: 16px;
+    font-size: 17px;
     color: rgba(255, 255, 255, .75);
     display: flex;
     justify-content: center;
@@ -205,6 +216,9 @@ canvas {
 }
 .tgl::selection, .tgl:after::selection, .tgl:before::selection, .tgl *::selection, .tgl *:after::selection, .tgl *:before::selection, .tgl + .tgl-btn::selection {
   background: none;
+}
+.tg-list-item {
+    position: relative;
 }
 .tgl + .tgl-btn {
   outline: 0;
@@ -275,4 +289,25 @@ canvas {
 }
 .tgl-flip:checked + .tgl-btn:active:after {
   transform: rotateY(20deg);
+}
+
+.tgl-flip ~ div.hint {
+    opacity: 0;
+    transition: opacity .3s;
+}
+
+.tgl-flip:checked ~ div.hint {
+    opacity: 1;
+    transition: opacity .2s;
+}
+
+div.hint {
+    position: absolute;
+    left: 0;
+    white-space: nowrap;
+    top: -5px;
+    margin-left: 66px;
+    font-family: 'Caveat', cursive;
+    font-size: 19px;
+    transform: rotate(-5deg);
 }

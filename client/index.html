@@ -4,11 +4,13 @@
 <head>
     <meta charset="utf-8" />
     <title>Sine me!</title>
-    <link href="https://fonts.googleapis.com/css?family=Enriqueta|Open+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Enriqueta|Open+Sans|Caveat" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="dist/client.css" />
 </head>
 
 <body class="bg-default">
+
+    <canvas id="canvas-result"></canvas>
 
     <div class="container">
         <div class="wrapper">
@@ -24,8 +26,9 @@
             <div class="cbx-animate">
                 <div class="label">Animate result?</div>
                 <div class="tg-list-item">
-                    <input id="cb5" type="checkbox" class="tgl tgl-flip" checked/>
+                    <input id="cb5" type="checkbox" class="tgl tgl-flip"/>
                     <label data-tg-off="Nope" data-tg-on="Sure!" for="cb5" class="tgl-btn"></label>
+                    <div class="hint">&lt;- might lag on<br />bigger screens</div>
                 </div>
             </div>
             <div class="sub">
@@ -39,20 +42,22 @@
                 </a>
             </div>
         </div>
+        <div class="spinner-wrapper">
+            <div class="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+        </div>
         <div class="error-wrapper">
             <div class="error">
                 <span>You broke it &#58;&#40;</span>
             </div>
         </div>
     </div>
-    </div>
-
 
     <image id="image-result" style="display: none" />
-
-<canvas id="canvas-result"></canvas>
-
-<script src="dist/client.js"></script>
+    <script src="dist/client.js"></script>
 </body>
 
 </html>

@@ -19,11 +19,11 @@ class App {
         this.inputElement = <HTMLInputElement>document.querySelector("#image-upload");
         this.canvasElement = <HTMLCanvasElement>document.querySelector("#canvas-result");
         this.sinus = new S.Sinus(this.canvasElement);
-        this.clientWidth = $(window).outerWidth();
+        this.clientWidth = $(window).width();
 
         $(window).resize(() => {
             clearTimeout(delayedResize);
-            delayedResize = setTimeout(this.resized, 250);
+            delayedResize = setTimeout(this.resized, 333);
         });
 
         $(this.inputElement).change(this.readImage);
@@ -81,38 +81,38 @@ class App {
         this.filename = response.filename;
         immediate = immediate || !$("#cb5").is(':checked');
 
-        this.sinus.process(response.result, response.patchsize, immediate);
+        this.sinus.process(response.result, response.patchsize, this.clientWidth, immediate);
     }
 
     private resized = () => {
 
-        if(this.image && this.clientWidth !== $(window).outerWidth()) {
-            this.clientWidth = $(window).outerWidth();
-            this.showSpinner();
-            this.upload(true);
+        if(this.image && this.clientWidth !== $(window).width()) {
+            this.clientWidth = $(window).width();
+            this.showSpinner(() => this.upload(true));
+            
         }
     }
 
-    private showSpinner = () => {
+    private showSpinner = (cb?: () => any) => {
 
         $('canvas').hide();
         $('body').removeClass('bg-default bg-white').addClass('bg-black');
-
-        if(!this.image)
-            $('.wrapper').fadeOut(1000);
-        else
-            $('.wrapper').fadeIn(200);
+        $('.wrapper').fadeOut(300, () => {
+            $('.spinner-wrapper').fadeIn(200);
+            if(cb) cb();
+        });
     }
 
     private hideSpinner = () => {
-        $('.container').fadeOut(200);
         $('canvas').show();
+        $('.spinner-wrapper').fadeOut(300);
         $('body').removeClass('bg-black').addClass('bg-white');
     }
 
     private showError = () => {
         
         $('body').removeClass('bg-white').addClass('bg-default');
+        $('canvas').hide();
         $('.spinner-wrapper').fadeOut(200, () => {
             $('.error-wrapper').fadeIn(200);
         });

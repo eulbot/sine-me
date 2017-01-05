@@ -21,6 +21,8 @@ export class Sinus {
 
     private easing: Easing[];
     private immediate: boolean;
+
+    private width: number;
     private sf: number;
     private ef: number;
     private fx: number;
@@ -30,10 +32,11 @@ export class Sinus {
         this.ctx = canvas.getContext('2d');
     }
 
-    public process = (data: number[][], patchSize: number, immediate?: boolean) => {
+    public process = (data: number[][], patchSize: number, width: number, immediate?: boolean) => {
 
         this.data = data;
         this.ps = patchSize;
+        this.width = width;
         this.render(immediate);
     }
 
@@ -73,7 +76,6 @@ export class Sinus {
                 this.sines[row].push(y * (this.ps * Math.sqrt(pace / this.max) / 2) + offset);
             }
         }   
-
     }
 
     private draw = () => {
@@ -113,7 +115,7 @@ export class Sinus {
         this.fx = 4;
         this.max = 255;
 
-        this.ctx.canvas.width = $(window).outerWidth();
+        this.ctx.canvas.width = this.width;
         this.ctx.canvas.height = this.data.length * this.ps;
         this.ctx.lineWidth = 1;
         this.ctx.shadowBlur = 2.5;

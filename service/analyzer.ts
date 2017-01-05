@@ -33,8 +33,10 @@ export class Analyzer {
                 if(x == this.image.bitmap.width - 1 && y == this.image.bitmap.height -1) {
 
                     image.getBase64(this.image._originalMime, (fu, base) => {
-                        this.res.send({ result: this.result, patchsize: Analyzer.PS, filename: this.filename, source: base });
-                        this.res.status(200);
+                        setTimeout(() => {
+                            this.res.send({ result: this.result, patchsize: Analyzer.PS, filename: this.filename, source: base });
+                            this.res.status(200);
+                        }, 2000);
                     });
                 }
             });
