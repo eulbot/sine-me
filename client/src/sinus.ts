@@ -155,7 +155,7 @@ export class Sinus {
 
     private easeInQuad: EaseFunc = (t: number, ll: number, ul: number): number => {
         
-        return t < ll ? 0 : t >= 1 - ul ? 1 : Math.pow((t - ll) * 1 / (1 - ll - ul), 2)
+        return t < ll ? 0 : t >= 1 - ul ? 1 : Math.pow((t - ll) * 1 / (1 - ll - ul), 2);
 	}
 
 	private easeOutQuad: EaseFunc = (t: number, ll: number, ul: number): number => {
